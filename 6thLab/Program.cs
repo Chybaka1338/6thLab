@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace _6thLab
 {
     internal class Program
     {
-        static int seed = DateTime.Now.Millisecond;
-        static Random r = new Random(seed);
+        public static int seed = DateTime.Now.Millisecond;
+        public static Random r = new Random(seed);
 
         static void Main(string[] args)
         {
-            Task1_1();
+            //Task1_1();
+            DateTime time = new DateTime();
+            Console.WriteLine($"{time.Minute}:{time.Millisecond}");
+            time = time.AddMilliseconds(6000);
+            Console.WriteLine($"{time.Minute}:{time.Second}");
+
+            Console.WriteLine("\nTo finish the process, press any key");
             Console.ReadKey();
         }
 
@@ -21,39 +24,45 @@ namespace _6thLab
         #region Task1
         static void Task1_1()
         {
-            int countParticipants = 0;
-            while(countParticipants == 0) 
-                int.TryParse(Console.ReadLine(), out countParticipants);
+            List<Person> participants = Person.GetParticipants();
 
-            List<Person> participants = new List<Person>();
-            for(int i = 0; i < countParticipants; i++)
+            participants.Sort((Person p1, Person p2) =>
             {
-                Console.Write("Enter the last name of participant: ");
-                string lastName = Console.ReadLine();
-                Console.Write("Enter the society: ");
-                string society = Console.ReadLine();
-                participants.Add(new Person(lastName, society, GetLength(), GetLength()));
-            }
-
-            participants.Sort(delegate (Person person1, Person person2)
-            {
-                return person1.TotalLength.CompareTo(person2.TotalLength) * (-1);
+                return p1.TotalLength.CompareTo(p2.TotalLength) * (-1);
             });
 
             int place = 1;
             foreach(var participant in participants)
             {
-                Console.WriteLine($"place: {place}, last name: {participant.lastName}, society: {participant.society}, " +
-                    $"total length = {participant.TotalLength}, fist try = {participant.firstTry}, last try = {participant.lastTry}");
+                Console.WriteLine($"place: {place}, last name: {participant._lastName}, society: {participant._society}, " +
+                    $"total length = {Math.Round(participant.TotalLength, 3)}, " +
+                    $"fist try = {Math.Round(participant._firstTry, 3)}, " +
+                    $"last try = {Math.Round(participant._lastTry, 3)}");
                 place++;
             }
         }
 
-        static double GetLength()
-        {
-            return (r.NextDouble() + 1) * 3;
-        }
+        
         #endregion
+
+        static void Task1_2()
+        {
+            List<Women> participants = Women.GetParticipants();
+
+            participants.Sort((Women w1, Women w2) =>
+            {
+                return w1._timeSeconds.CompareTo(w2._timeSeconds) * (-1);
+            });
+
+            int standart = 120;
+
+            foreach(var participant in participants)
+            {
+                bool isPassed = participant._timeSeconds < standart;
+                
+                Console.WriteLine($"{participant._lastName}, {participant._nameGroup}, {participant._lastNameTeacher}, {new DateTime()}");
+            }
+        }
         #endregion
     }
 }
