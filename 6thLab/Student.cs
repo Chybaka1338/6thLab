@@ -19,8 +19,12 @@ namespace _6thLab
 
         public int this[int index]
         {
-            get { return _marks[index]; }
-            set { _marks[index] = value; }
+            get
+            {
+                if(index >= 0 && index < _marks.Length)
+                    return _marks[index];
+                return 0;
+            }
         }
 
         public string Name

@@ -6,7 +6,18 @@ using System.Threading.Tasks;
 
 namespace _6thLab
 {
-    internal class Sportsmen
+    internal struct Sportsmen
     {
+        string _lastName;
+        int _timeSecond;
+
+        public string LastName { get { return _lastName; } }
+        public int TimeSecond { get { return _timeSecond; } }
+
+        public Sportsmen(string lastName, int timeSecond)
+        {
+            _lastName = lastName;
+            _timeSecond = timeSecond;
+        }
     }
 }

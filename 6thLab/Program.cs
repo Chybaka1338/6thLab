@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 
 namespace _6thLab
@@ -199,11 +200,93 @@ namespace _6thLab
         }
         #endregion
 
-        #region Task2
+        #region Task4
         static void Task3_4()
         {
+            List<Sportsmen> firstGroup = FillGroup();
+            List<Sportsmen> secondGroup = FillGroup();
 
+            firstGroup.Sort((Sportsmen s1, Sportsmen s2) =>
+            {
+                return s1.TimeSecond.CompareTo(s2.TimeSecond) * (-1);
+            });
+
+            PrintGroup(firstGroup);
+
+            secondGroup.Sort((Sportsmen s1, Sportsmen s2) =>
+            {
+                return s1.TimeSecond.CompareTo(s2.TimeSecond) * (-1);
+            });
+
+            PrintGroup(secondGroup);
+
+            List<Sportsmen> commonGroup = firstGroup.Concat(secondGroup).ToList();
+            commonGroup.Sort((Sportsmen s1, Sportsmen s2) =>
+            {
+                return s1.TimeSecond.CompareTo(s2.TimeSecond) * (-1);
+            });
+
+            Console.WriteLine("All groups");
+            PrintGroup(commonGroup);
         }
+
+        static void PrintGroup(List<Sportsmen> group)
+        {
+            int place = 1;
+            foreach(var sportsmen in group)
+            {
+                DateTime time = new DateTime();
+                time.AddMinutes(sportsmen.TimeSecond / 60);
+                time.AddSeconds(sportsmen.TimeSecond - time.Minute * 60);
+                Console.WriteLine($"{place}, {sportsmen.LastName} time = ({time.Minute}m:{time.Second}s)");
+                place++;
+            }
+        }
+
+        static List<Sportsmen> FillGroup()
+        {
+            List<Sportsmen> group = new List<Sportsmen>();
+            while (true)
+            {
+                Console.Write("enter the name: ");
+                string lastName = Console.ReadLine();
+                if (String.IsNullOrEmpty(lastName)) break;
+                group.Add(new Sportsmen(lastName, GetTime()));
+            }
+            return group;
+        }
+
+        static int GetTime()
+        {
+            int maxTimeSecond = 1620;
+            int minTimeSecond = 1350;
+            return r.Next(minTimeSecond, maxTimeSecond);
+        }
+        #endregion
+
+        #region Task6
+        static string firstQuestion = "какое животное вы связываете с Японией и японцами?";
+        static string secondQuestion = "какая черта характера присуща японцам больше всего?";
+        static string thirdQuestion = "какой неодушевленный предмет или понятие вы связываете с Японией?";
+        static void Task3_6()
+        {
+            List<Listener> listeners = new List<Listener>();
+            string[] questions = { firstQuestion, secondQuestion, thirdQuestion };
+            while (true)
+            {
+                listeners.Add(Listener.GetListener(questions));
+                Console.WriteLine("would you like to end? y/n");
+                if (Console.ReadKey().KeyChar.Equals('y')) break;
+            }
+
+            Radio radio = new Radio();
+            radio.SetAnswers(listeners);
+            Radio.PrintStatistic(Radio.SortAnswers(radio.First));
+            Radio.PrintStatistic(Radio.SortAnswers(radio.Second));
+            Radio.PrintStatistic(Radio.SortAnswers(radio.Third));
+        }
+
+
         #endregion
         #endregion
     }
