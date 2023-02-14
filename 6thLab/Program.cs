@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.PerformanceData;
 using System.Linq;
 using System.Net;
 
@@ -16,6 +17,9 @@ namespace _6thLab
             //Task1_2();
             //Task2_1();
             //Task2_2();
+            //Task3_1();
+            //Task3_4();
+            Task3_6();
             Console.WriteLine("\nTo finish the process, press any key");
             Console.ReadKey();
         }
@@ -60,7 +64,7 @@ namespace _6thLab
             int count = 0;
             foreach(var participant in participants)
             {
-                bool isPassed = participant._timeSeconds < standart;
+                bool isPassed = participant._timeSeconds <= standart;
                 if (isPassed) count++;
 
                 DateTime time = new DateTime().AddSeconds(participant._timeSeconds);
@@ -69,7 +73,7 @@ namespace _6thLab
                     $"test: {isPassed}");
             }
 
-            Console.WriteLine("");
+            Console.WriteLine($"passed the standard: {count}");
         }
         #endregion
         #endregion
@@ -91,10 +95,11 @@ namespace _6thLab
             }
 
             List<Student> goodStudents = new List<Student>();
-            foreach(var student in students)
+            students.ForEach((student) =>
             {
-                if(student.Middle >= 4) goodStudents.Add(student);
-            }
+                if(student.Middle >= 4)
+                    goodStudents.Add(student);
+            });
 
             goodStudents.Sort((Student s1, Student s2) =>
             {
@@ -105,6 +110,7 @@ namespace _6thLab
             foreach(var student in goodStudents)
             {
                 Console.WriteLine($"{i} student has middle score = {student.Middle}");
+                i++;
             }
         }
         #endregion
@@ -119,7 +125,7 @@ namespace _6thLab
                     int mark;
                     do
                     {
-                        Console.Write($"Enter {i} mark = ");
+                        Console.Write($"Enter {i + 1} mark = ");
                         mark = int.Parse(Console.ReadLine());
                     } while (mark < 2 && mark > 5);
                     marks[i] = mark;
@@ -138,30 +144,31 @@ namespace _6thLab
             int[] marks;
             while (true)
             {
-                Console.WriteLine("Give grades to the student:");
                 marks = SetMarks(numberExams);
                 if (marks == null) break;
                 students.Add(new Student(marks));
             }
 
-            for (int i = students.Count - 1; i >= 0; i--)
+            List<Student> goodStudents = new List<Student>();
+            students.ForEach(student =>
             {
-                for (int j = 0; j < numberExams; j++)
+                bool isPassed = true;
+                for(int i = 0; i < numberExams; i++)
                 {
-                    if (students[i][j] == 2) students.RemoveAt(i);
+                    if (student[i] == 2) isPassed = false;
                 }
-            }
 
-            students.Sort((Student s1, Student s2) =>
-            {
-                return s1.Middle.CompareTo(s2.Middle) * (-1);
+                if(isPassed) goodStudents.Add(student);
             });
 
-            
-            foreach(var student in students)
+            goodStudents.Sort((s1, s2) => s1.Middle.CompareTo(s2.Middle) * (-1));
+
+            int place = 1;
+            goodStudents.ForEach(student =>
             {
-                Console.WriteLine($"student has middle score = {student.Middle}");
-            }
+                Console.WriteLine($"{place} student has middle score = {student.Middle}");
+                place++;
+            });
         }
         #endregion
         #endregion
@@ -172,61 +179,53 @@ namespace _6thLab
         {
             int numberExams = 5;
             int countOfGroups = 3;
-            List<Group> groups = new List<Group>();
-            for(int i = 0; i < countOfGroups; i++)
+            Group[] groups = new Group[countOfGroups];
+            for(int i = 0; i < groups.Length; i++)
             {
-                groups.Add(new Group(numberExams, i + 1));
+                Console.WriteLine("Initialize group");
+                groups[i] = new Group(numberExams, i + 1);
             }
 
-            foreach(var group in groups)
-            {
-                group.SortGroup();
-            }
+            Array.ForEach(groups, (group) =>
+                group.SortGroup());
 
-            foreach(var group in groups)
-            {
-                group.PrintGroup();
-            }
+            Array.Sort(groups, (g1, g2) =>
+                g1.MiddleScoreGroup.CompareTo(g2.MiddleScoreGroup) * (-1));
 
-            groups.Sort((Group g1, Group g2) =>
-            {
-                return g1.MiddleScoreGroup.CompareTo(g2.MiddleScoreGroup) * (-1);
-            });
+            Array.ForEach(groups, (group) =>
+                group.PrintGroup());
 
-            foreach(var group in groups)
-            {
-                Console.WriteLine($"{group.NameGroup} has middle score = {group.MiddleScoreGroup}");
-            }
+            Console.WriteLine();
+            Array.ForEach(groups, (group) =>
+                Console.WriteLine($"{group.NameGroup} has middle score = {group.MiddleScoreGroup}"));
         }
         #endregion
 
         #region Task4
         static void Task3_4()
         {
+            Console.WriteLine("fill the first group");
             List<Sportsmen> firstGroup = FillGroup();
+            Console.WriteLine("fill the second group");
             List<Sportsmen> secondGroup = FillGroup();
 
             firstGroup.Sort((Sportsmen s1, Sportsmen s2) =>
-            {
-                return s1.TimeSecond.CompareTo(s2.TimeSecond) * (-1);
-            });
+                s1.TimeSecond.CompareTo(s2.TimeSecond));
 
+            Console.WriteLine("First group");
             PrintGroup(firstGroup);
 
             secondGroup.Sort((Sportsmen s1, Sportsmen s2) =>
-            {
-                return s1.TimeSecond.CompareTo(s2.TimeSecond) * (-1);
-            });
+                s1.TimeSecond.CompareTo(s2.TimeSecond));
 
+            Console.WriteLine("Second group");
             PrintGroup(secondGroup);
 
             List<Sportsmen> commonGroup = firstGroup.Concat(secondGroup).ToList();
             commonGroup.Sort((Sportsmen s1, Sportsmen s2) =>
-            {
-                return s1.TimeSecond.CompareTo(s2.TimeSecond) * (-1);
-            });
+                s1.TimeSecond.CompareTo(s2.TimeSecond));
 
-            Console.WriteLine("All groups");
+            Console.WriteLine("\nCommon group");
             PrintGroup(commonGroup);
         }
 
@@ -236,8 +235,7 @@ namespace _6thLab
             foreach(var sportsmen in group)
             {
                 DateTime time = new DateTime();
-                time.AddMinutes(sportsmen.TimeSecond / 60);
-                time.AddSeconds(sportsmen.TimeSecond - time.Minute * 60);
+                time = time.AddSeconds(sportsmen.TimeSecond);
                 Console.WriteLine($"{place}, {sportsmen.LastName} time = ({time.Minute}m:{time.Second}s)");
                 place++;
             }
@@ -277,6 +275,7 @@ namespace _6thLab
                 listeners.Add(Listener.GetListener(questions));
                 Console.WriteLine("would you like to end? y/n");
                 if (Console.ReadKey().KeyChar.Equals('y')) break;
+                Console.WriteLine();
             }
 
             Radio radio = new Radio();

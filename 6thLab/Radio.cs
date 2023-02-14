@@ -44,29 +44,28 @@ namespace _6thLab
                     dict[answer]++;
             }
 
-            var sortedDict = dict.OrderByDescending(answer => answer.Value).ToDictionary(answer => answer.Key, answer => answer.Value);
-            return sortedDict;
+            return dict.OrderByDescending(answer => answer.Value).ToDictionary(answer => answer.Key, answer => answer.Value);
         }
 
-        public static void PrintPair(KeyValuePair<string, int> pair, int place, int percent)
+        public static void PrintPair(KeyValuePair<string, int> pair, int place, double percent)
         {
-            Console.WriteLine($"{place}) Answer: {pair.Key} answers to the question {pair.Value}, {percent}");
+            Console.WriteLine($"{place}) Answer: {pair.Key} answers to the question {pair.Value}, {Math.Round(percent)}%");
         }
 
         public static void PrintStatistic(Dictionary<string, int> dict)
         {
-            int countAnswers = 0;
+            int totalAnswers = 0;
             foreach (var pair in dict)
             {
-                countAnswers += pair.Value;
+                totalAnswers += pair.Value;
             }
 
-            int upBound = dict.Count >= 5 ? 5 : dict.Count;
+            int upBound = dict.Count > 5 ? 5 : dict.Count;
             for(int i = 0; i < upBound; i++)
             {
                 var pair = dict.ElementAt(i);
                 int place = i + 1;
-                int percent = (pair.Value / countAnswers) * 100;
+                double percent = ((double)pair.Value / totalAnswers) * 100;
                 PrintPair(pair, place, percent);
             }
         }

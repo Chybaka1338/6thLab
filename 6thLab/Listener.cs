@@ -27,11 +27,12 @@ namespace _6thLab
             _answers = answers;
         }
 
-        public static Listener? GetListener(int countOfQuestions)
+        public static Listener GetListener(string[] questions)
         {
-            string[] answers = new string[countOfQuestions];
-            for(int i = 0; i < answers.Length; i++)
+            string[] answers = new string[questions.Length];
+            for(int i = 0 ; i < questions.Length; i++)
             {
+                Console.WriteLine(questions[i] + " ");
                 answers[i] = Console.ReadLine();
             }
 

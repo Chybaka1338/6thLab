@@ -46,7 +46,7 @@ namespace _6thLab
 
         static double GetJumpLength()
         {
-            return (Program.r.NextDouble()) * 3;
+            return (Program.r.NextDouble()) * 2.7;
         }
     }
 }
