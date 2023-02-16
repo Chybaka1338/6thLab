@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.PerformanceData;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 
 namespace _6thLab
 {
@@ -17,9 +18,9 @@ namespace _6thLab
             //Task1_2();
             //Task2_1();
             //Task2_2();
-            //Task3_1();
+            Task3_1();
             //Task3_4();
-            Task3_6();
+            //Task3_6();
             Console.WriteLine("\nTo finish the process, press any key");
             Console.ReadKey();
         }
@@ -116,23 +117,13 @@ namespace _6thLab
         #endregion
         public static int[] SetMarks(int numberExams)
         {
-            Console.WriteLine("Give grades to the student:");
             int[] marks = new int[numberExams];
-            try
+            for(int i = 0; i < marks.Length; i++)
             {
-                for(int i = 0; i < marks.Length; i++)
-                {
-                    int mark;
-                    do
-                    {
-                        Console.Write($"Enter {i + 1} mark = ");
-                        mark = int.Parse(Console.ReadLine());
-                    } while (mark < 2 && mark > 5);
-                    marks[i] = mark;
-                }
-                return marks;
+                marks[i] = r.Next(2, 5);
             }
-            catch (Exception) { return null; }
+            Console.WriteLine("marks are set");
+            return marks;
         }
 
         #region Task2
@@ -221,24 +212,44 @@ namespace _6thLab
             Console.WriteLine("Second group");
             PrintGroup(secondGroup);
 
-            List<Sportsmen> commonGroup = firstGroup.Concat(secondGroup).ToList();
-            commonGroup.Sort((Sportsmen s1, Sportsmen s2) =>
-                s1.TimeSecond.CompareTo(s2.TimeSecond));
+            List<Sportsmen> commonGroup = GetCommonGroup(firstGroup, secondGroup); 
 
             Console.WriteLine("\nCommon group");
             PrintGroup(commonGroup);
         }
 
+        static List<Sportsmen> GetCommonGroup(List<Sportsmen> g1, List<Sportsmen> g2)
+        {
+            List<Sportsmen> commonGroup = new List<Sportsmen>();
+            int i = 0;
+            int j = 0;
+            while(i < g1.Count && j < g2.Count)
+            {
+                Sportsmen s = g1[i].TimeSecond < g2[j].TimeSecond ? g1[i++] : g2[j++];
+                commonGroup.Add(s);
+            }
+            while(i < g1.Count)
+            {
+                commonGroup.Add(g1[i++]);
+            }
+            while(j < g2.Count)
+            {
+                commonGroup.Add(g2[j++]);
+            }
+
+            return commonGroup;
+        }
+
         static void PrintGroup(List<Sportsmen> group)
         {
             int place = 1;
-            foreach(var sportsmen in group)
+            group.ForEach(sportsmen =>
             {
                 DateTime time = new DateTime();
                 time = time.AddSeconds(sportsmen.TimeSecond);
                 Console.WriteLine($"{place}, {sportsmen.LastName} time = ({time.Minute}m:{time.Second}s)");
                 place++;
-            }
+            });
         }
 
         static List<Sportsmen> FillGroup()

@@ -63,7 +63,7 @@ namespace _6thLab
             string name = Console.ReadLine();
             if (String.IsNullOrEmpty(name)) return null;
             int[] marks = Program.SetMarks(numberExams);
-            if (marks == null) return null;
+
             return new Student(marks, name);
         }
     }
