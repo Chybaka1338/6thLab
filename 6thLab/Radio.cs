@@ -16,14 +16,6 @@ namespace _6thLab
         Dictionary<String, int>[] _popularAnswers;
         int[] _countAnswers;
 
-        Radio(List<String> questions, Dictionary<String, int>[] answers)
-        {
-            _questions = questions;
-            _answers = answers;
-            _popularAnswers = new Dictionary<string, int>[answers.Length];
-            _countAnswers = new int[answers.Length];
-        }
-
         static public Radio InitializeRadio(List<String> questions, List<Listener> listeners)
         {
             Radio radio = new Radio();
