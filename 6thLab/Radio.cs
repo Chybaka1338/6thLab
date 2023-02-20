@@ -1,72 +1,130 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
+using System.Security.Policy;
+using System.Threading;
 
 namespace _6thLab
 {
     internal struct Radio
     {
-        List<string> first;
-        List<string> second;
-        List<string> third;
+        List<String> _questions;
+        Dictionary<String, int>[] _answers;
+        Dictionary<String, int>[] _popularAnswers;
+        int[] _countAnswers;
 
-        public List<string> First { get { return first; } }
-        public List<string> Second { get { return second; } }
-        public List<string> Third { get { return third; } }
-
-        public void SetAnswers(List<Listener> listeners)
+        Radio(List<String> questions, Dictionary<String, int>[] answers)
         {
-            first = new List<string>();
-            second = new List<string>();
-            third = new List<string>();
+            _questions = questions;
+            _answers = answers;
+            _popularAnswers = new Dictionary<string, int>[answers.Length];
+            _countAnswers = new int[answers.Length];
+        }
 
-            foreach(var listener in listeners)
+        static public Radio InitializeRadio(List<String> questions)
+        {
+            Dictionary<String, int>[] answers = new Dictionary<string, int>[questions.Count];
+            while(true)
             {
-                first.Add(listener[0]);
-                second.Add(listener[1]);
-                third.Add(listener[2]);
+                Listener listener = Listener.InitializeListener(questions);
+                for(int i = 0; i < answers.Length; i++)
+                {
+                    if (!answers[i].ContainsKey(listener[i])) answers[i].Add(listener[i], 1);
+                    else answers[i][listener[i]]++;
+                }
+                Console.WriteLine("Would you like to end? (y/n)");
+                if (Console.ReadKey().Equals('y')) break;
+            }
+
+            Radio radio = new Radio(questions, answers);
+            radio.SetPopularAnswers();
+            return radio;
+        }
+
+        static public Radio InitializeRadio(List<String> questions, List<Listener> listeners)
+        {
+            Dictionary<String, int>[] answers = new Dictionary<String, int>[questions.Count];
+            listeners.ForEach(listener =>
+            {
+                for(int i = 0; i < answers.Length; i++)
+                {
+                    if (!answers[i].ContainsKey(listener[i])) answers[i].Add(listener[i], 1);
+                    else answers[i][listener[i]]++;
+                }
+            });
+
+            Radio radio = new Radio(questions, answers);
+            radio.SetPopularAnswers();
+            return radio;
+        }
+
+        private void DeleteAllEmptyAnswers()
+        {
+            for(int i = 0; i < _answers.Length; i++)
+            {
+                foreach(var pair in _answers[i])
+                {
+                    if(String.IsNullOrEmpty(pair.Key)) _answers[i].Remove(pair.Key);
+                }
             }
         }
 
-        public static Dictionary<string, int> SortAnswers(List<string> answers)
+        private void TotalNumberAnswers()
         {
-            Dictionary<string, int> dict = new Dictionary<string, int>();
-
-            answers.RemoveAll(answer => String.IsNullOrEmpty(answer));
-            answers.ForEach(answer => answer.ToLower().Trim());
-            answers.Sort();
-            foreach (var answer in answers)
+            for(int i = 0; i < _answers.Length; i++)
             {
-                if (!dict.ContainsKey(answer))
-                    dict.Add(answer, 1);
-                else
-                    dict[answer]++;
+                _countAnswers[i] = 0;
+                foreach(var pair in _answers[i])
+                {
+                    _countAnswers[i] += pair.Value;
+                }
             }
-
-            return dict.OrderByDescending(answer => answer.Value).ToDictionary(answer => answer.Key, answer => answer.Value);
         }
 
-        public static void PrintPair(KeyValuePair<string, int> pair, int place, double percent)
+        void SetPopularAnswers()
         {
-            Console.WriteLine($"{place}) Answer: {pair.Key} answers to the question {pair.Value}, {Math.Round(percent)}%");
-        }
-
-        public static void PrintStatistic(Dictionary<string, int> dict)
-        {
-            int totalAnswers = 0;
-            foreach (var pair in dict)
+            DeleteAllEmptyAnswers();
+            Dictionary<String, int>[] popularAnswers = new Dictionary<String, int>[_answers.Length];
+            for(int i = 0; i < _answers.Length; i++)
             {
-                totalAnswers += pair.Value;
+                for(int j = 0; j < 5; j++)
+                {
+                    var popularAnswer = GetPopularAnswer(_answers[i]);
+                    popularAnswers[i].Add(popularAnswer.Key, popularAnswer.Value);
+                    _answers[i].Remove(popularAnswer.Key);
+                }
             }
 
-            int upBound = dict.Count > 5 ? 5 : dict.Count;
-            for(int i = 0; i < upBound; i++)
+            _popularAnswers = popularAnswers;
+        }
+
+        static KeyValuePair<string, int> GetPopularAnswer(Dictionary<String, int> dict)
+        {
+            int max = int.MinValue;
+            KeyValuePair<String, int> popularAnswer = new KeyValuePair<string, int>();
+            foreach(var pair in dict)
             {
-                var pair = dict.ElementAt(i);
-                int place = i + 1;
-                double percent = ((double)pair.Value / totalAnswers) * 100;
-                PrintPair(pair, place, percent);
+                if(max < pair.Value)
+                {
+                    max = pair.Value;
+                    popularAnswer = pair;
+                }
+            }
+            return popularAnswer;
+        }
+
+        public void PrintPopularAnswers()
+        {
+            for(int i = 0; i < _popularAnswers.Length; i++)
+            {
+                foreach(var pair in _popularAnswers[i])
+                {
+                    var percent = (double)pair.Value / _countAnswers[i]; 
+                    Console.WriteLine($"{pair.Key}, {pair.Value}, {percent}%");
+                }
             }
         }
     }
