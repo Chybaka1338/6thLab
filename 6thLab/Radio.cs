@@ -24,26 +24,6 @@ namespace _6thLab
             _countAnswers = new int[answers.Length];
         }
 
-        static public Radio InitializeRadio(List<String> questions)
-        {
-            Dictionary<String, int>[] answers = new Dictionary<string, int>[questions.Count];
-            while(true)
-            {
-                Listener listener = Listener.InitializeListener(questions);
-                for(int i = 0; i < answers.Length; i++)
-                {
-                    if (!answers[i].ContainsKey(listener[i])) answers[i].Add(listener[i], 1);
-                    else answers[i][listener[i]]++;
-                }
-                Console.WriteLine("Would you like to end? (y/n)");
-                if (Console.ReadKey().Equals('y')) break;
-            }
-
-            Radio radio = new Radio(questions, answers);
-            radio.SetPopularAnswers();
-            return radio;
-        }
-
         static public Radio InitializeRadio(List<String> questions, List<Listener> listeners)
         {
             Dictionary<String, int>[] answers = new Dictionary<String, int>[questions.Count];
