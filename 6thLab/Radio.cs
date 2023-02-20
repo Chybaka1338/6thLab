@@ -26,19 +26,31 @@ namespace _6thLab
 
         static public Radio InitializeRadio(List<String> questions, List<Listener> listeners)
         {
-            Dictionary<String, int>[] answers = new Dictionary<String, int>[questions.Count];
-            listeners.ForEach(listener =>
-            {
-                for(int i = 0; i < answers.Length; i++)
-                {
-                    if (!answers[i].ContainsKey(listener[i])) answers[i].Add(listener[i], 1);
-                    else answers[i][listener[i]]++;
-                }
-            });
-
-            Radio radio = new Radio(questions, answers);
+            Radio radio = new Radio();
+            radio.SetQuestions(questions);
+            radio.SetAnswers(listeners);
+            radio.DeleteAllEmptyAnswers();
+            radio.SetTotalNumberAnswers();
             radio.SetPopularAnswers();
             return radio;
+        }
+
+        private void SetQuestions(List<String> questions)
+        {
+            _questions = questions;
+        }
+
+        private void SetAnswers(List<Listener> listeners)
+        {
+            _answers = new Dictionary<string, int>[_questions.Count];
+            foreach(var listener in listeners)
+            {
+                for(int i = 0; i < _answers.Length; i++)
+                {
+                    if (!_answers[i].ContainsKey(listener[i])) _answers[i].Add(listener[i], 1);
+                    else _answers[i][listener[i]]++;
+                }
+            }
         }
 
         private void DeleteAllEmptyAnswers()
@@ -52,7 +64,7 @@ namespace _6thLab
             }
         }
 
-        private void TotalNumberAnswers()
+        private void SetTotalNumberAnswers()
         {
             for(int i = 0; i < _answers.Length; i++)
             {
@@ -66,7 +78,6 @@ namespace _6thLab
 
         void SetPopularAnswers()
         {
-            DeleteAllEmptyAnswers();
             Dictionary<String, int>[] popularAnswers = new Dictionary<String, int>[_answers.Length];
             for(int i = 0; i < _answers.Length; i++)
             {
