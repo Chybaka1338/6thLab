@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics.PerformanceData;
 using System.Linq;
 using System.Net;
@@ -18,9 +19,9 @@ namespace _6thLab
             //Task1_2();
             //Task2_1();
             //Task2_2();
-            Task3_1();
+            //Task3_1();
             //Task3_4();
-            //Task3_6();
+            Task3_6();
             Console.WriteLine("\nTo finish the process, press any key");
             Console.ReadKey();
         }
@@ -279,21 +280,9 @@ namespace _6thLab
         static string thirdQuestion = "какой неодушевленный предмет или понятие вы связываете с Японией?";
         static void Task3_6()
         {
+            List<String> questions = new List<String> { firstQuestion, secondQuestion, thirdQuestion };
             List<Listener> listeners = new List<Listener>();
-            string[] questions = { firstQuestion, secondQuestion, thirdQuestion };
-            while (true)
-            {
-                listeners.Add(Listener.GetListener(questions));
-                Console.WriteLine("would you like to end? y/n");
-                if (Console.ReadKey().KeyChar.Equals('y')) break;
-                Console.WriteLine();
-            }
-
-            Radio radio = new Radio();
-            radio.SetAnswers(listeners);
-            Radio.PrintStatistic(Radio.SortAnswers(radio.First));
-            Radio.PrintStatistic(Radio.SortAnswers(radio.Second));
-            Radio.PrintStatistic(Radio.SortAnswers(radio.Third));
+            Radio radio = Radio.InitializeRadio(questions, listeners);
         }
 
 
