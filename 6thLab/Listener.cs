@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data.SqlTypes;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -10,32 +11,27 @@ namespace _6thLab
 {
     internal struct Listener
     {
-        string[] _answers;
+        List<string> _answers;
 
         public string this[int index]
         {
-            get
-            {
-                if (index >= 0 && index < _answers.Length)
-                    return _answers[index];
-                return String.Empty;
-            }
+            get { return _answers[index]; }
         }
 
-        private Listener(string[] answers)
+        private Listener(List<string> answers)
         {
             _answers = answers;
         }
 
-        public static Listener GetListener(string[] questions)
+        public static Listener InitializeListener(List<String> questions)
         {
-            string[] answers = new string[questions.Length];
-            for(int i = 0 ; i < questions.Length; i++)
+            Console.WriteLine();
+            List<string> answers = new List<string>();
+            questions.ForEach(question =>
             {
-                Console.WriteLine(questions[i] + " ");
-                answers[i] = Console.ReadLine();
-            }
-
+                Console.Write(question + " ");
+                answers.Add(Console.ReadLine());
+            });
             return new Listener(answers);
         }
     }
