@@ -283,6 +283,7 @@ namespace _6thLab
             List<String> questions = new List<String> { firstQuestion, secondQuestion, thirdQuestion };
             List<Listener> listeners = new List<Listener>();
             Radio radio = Radio.InitializeRadio(questions, listeners);
+            radio.PrintPopularAnswers();
         }
 
 

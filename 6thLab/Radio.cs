@@ -71,13 +71,16 @@ namespace _6thLab
         void SetPopularAnswers()
         {
             Dictionary<String, int>[] popularAnswers = new Dictionary<String, int>[_answers.Length];
-            for(int i = 0; i < _answers.Length; i++)
+            Dictionary<String, int>[] answers = new Dictionary<String, int>[_answers.Length];
+            answers.CopyTo(_answers, 0);
+            
+            for(int i = 0; i < answers.Length; i++)
             {
                 for(int j = 0; j < 5; j++)
                 {
-                    var popularAnswer = GetPopularAnswer(_answers[i]);
+                    var popularAnswer = GetPopularAnswer(answers[i]);
                     popularAnswers[i].Add(popularAnswer.Key, popularAnswer.Value);
-                    _answers[i].Remove(popularAnswer.Key);
+                    answers[i].Remove(popularAnswer.Key);
                 }
             }
 
