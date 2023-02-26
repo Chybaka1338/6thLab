@@ -104,24 +104,26 @@ namespace _6thLab
             int max = int.MinValue;
             var pair = new KeyValuePair<String, int>();
 
-            for(int i = 0; i < pairs.Count && numberMaxElements != 0; i++)
+            int i = 0;
+            while(numberMaxElements != 0)
             {
-                if (max < pairs[i].Value)
-                {
-                    max = pairs[i].Value;
-                    pair = pairs[i];
-                }
-
-                if (i + 1 == pairs.Count)
+                if(i == pairs.Count)
                 {
                     max = int.MinValue;
                     i = 0;
                     numberMaxElements--;
                     popularAnswers.Add(pair.Key, pair.Value);
                     pairs.Remove(pair);
+                    continue;
                 }
+
+                if(max < pairs[i].Value)
+                {
+                    max = pair.Value;
+                    pair = pairs[i];
+                }
+                i++;
             }
-            
             return popularAnswers;
         }
 
