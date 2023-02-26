@@ -35,6 +35,11 @@ namespace _6thLab
         private void SetAnswers(List<Listener> listeners)
         {
             _answers = new Dictionary<string, int>[_questions.Count];
+            for (int i = 0; i < _answers.Length; i++)
+            {
+                _answers[i] = new Dictionary<string, int>();
+            }
+
             foreach(var listener in listeners)
             {
                 for(int i = 0; i < _answers.Length; i++)
@@ -49,15 +54,18 @@ namespace _6thLab
         {
             for(int i = 0; i < _answers.Length; i++)
             {
-                foreach(var pair in _answers[i])
+                var key = _answers[i].Keys.ToArray();
+                for(int j = 0; j < key.Length; j++)
                 {
-                    if(String.IsNullOrEmpty(pair.Key)) _answers[i].Remove(pair.Key);
+                    if (String.IsNullOrEmpty(key[j])) _answers[i].Remove(key[j]);
                 }
             }
         }
 
         private void SetTotalNumberAnswers()
         {
+            _countAnswers = new int[_answers.Length];
+
             for(int i = 0; i < _answers.Length; i++)
             {
                 _countAnswers[i] = 0;
@@ -70,47 +78,64 @@ namespace _6thLab
 
         void SetPopularAnswers()
         {
-            Dictionary<String, int>[] popularAnswers = new Dictionary<String, int>[_answers.Length];
-            Dictionary<String, int>[] answers = new Dictionary<String, int>[_answers.Length];
-            answers.CopyTo(_answers, 0);
+            _popularAnswers = new Dictionary<string, int>[_answers.Length];
+            var buff = Copy();
             
-            for(int i = 0; i < answers.Length; i++)
+            for(int i = 0; i < buff.Length; i++)
             {
-                for(int j = 0; j < 5; j++)
-                {
-                    var popularAnswer = GetPopularAnswer(answers[i]);
-                    popularAnswers[i].Add(popularAnswer.Key, popularAnswer.Value);
-                    answers[i].Remove(popularAnswer.Key);
-                }
+                _popularAnswers[i] = GetPopularAnswers(buff[i].ToList());
             }
-
-            _popularAnswers = popularAnswers;
         }
 
-        static KeyValuePair<string, int> GetPopularAnswer(Dictionary<String, int> dict)
+        Dictionary<String, int>[] Copy()
         {
-            int max = int.MinValue;
-            KeyValuePair<String, int> popularAnswer = new KeyValuePair<string, int>();
-            foreach(var pair in dict)
+            Dictionary<String, int>[] dist = new Dictionary<string, int>[_answers.Length];
+            for(int i = 0; i < dist.Length; i++)
             {
-                if(max < pair.Value)
+                dist[i] = new Dictionary<string, int>(_answers[i]);
+            }
+            return dist;
+        }
+
+        static Dictionary<String, int> GetPopularAnswers(List<KeyValuePair<String, int>> pairs)
+        {
+            Dictionary<String, int> popularAnswers = new Dictionary<string, int>();
+            int numberMaxElements = pairs.Count > 5 ? 5 : pairs.Count;
+            int max = int.MinValue;
+            var pair = new KeyValuePair<String, int>();
+
+            for(int i = 0; i < pairs.Count && numberMaxElements != 0; i++)
+            {
+                if (max < pairs[i].Value)
                 {
-                    max = pair.Value;
-                    popularAnswer = pair;
+                    max = pairs[i].Value;
+                    pair = pairs[i];
+                }
+
+                if (i + 1 == pairs.Count)
+                {
+                    max = int.MinValue;
+                    i = 0;
+                    numberMaxElements--;
+                    popularAnswers.Add(pair.Key, pair.Value);
+                    pairs.Remove(pair);
                 }
             }
-            return popularAnswer;
+            
+            return popularAnswers;
         }
 
         public void PrintPopularAnswers()
         {
             for(int i = 0; i < _popularAnswers.Length; i++)
             {
+                Console.WriteLine($"popular answers for this question: {_questions[i]}");
                 foreach(var pair in _popularAnswers[i])
                 {
-                    var percent = (double)pair.Value / _countAnswers[i]; 
-                    Console.WriteLine($"{pair.Key}, {pair.Value}, {percent}%");
+                    var percent = (double)pair.Value / _countAnswers[i] * 100; 
+                    Console.WriteLine($"{pair.Key}, {pair.Value}, {Math.Round(percent, 1)}%");
                 }
+                Console.WriteLine();
             }
         }
     }
