@@ -281,12 +281,26 @@ namespace _6thLab
         static void Task3_6()
         {
             List<String> questions = new List<String> { firstQuestion, secondQuestion, thirdQuestion };
-            List<Listener> listeners = new List<Listener>();
+            List<Listener> listeners = GetListeners();
             Radio radio = Radio.InitializeRadio(questions, listeners);
             radio.PrintPopularAnswers();
         }
 
-
+        static List<Listener> GetListeners()
+        {
+            List<Listener> listeners = new List<Listener>();
+            listeners.Add(new Listener(new string[]{"кошка", "трудолюбие", "аниме"}));
+            listeners.Add(new Listener(new string[]{"японская макака", "трудолюбие", "машины"}));
+            listeners.Add(new Listener(new string[]{"японская макака", "гордость", "машины"}));
+            listeners.Add(new Listener(new string[]{"собака", "трудолюбие", "машины"}));
+            listeners.Add(new Listener(new string[]{"собака", "любопытсво", "камикадзе"}));
+            listeners.Add(new Listener(new string[]{"японская макака", "трудолюбие", "камикадзе"}));
+            listeners.Add(new Listener(new string[]{"кошка", "трудолюбие", "камикадзе"}));
+            listeners.Add(new Listener(new string[]{"", "", "камикадзе"}));
+            listeners.Add(new Listener(new string[]{"", "", ""}));
+            listeners.Add(new Listener(new string[]{"кошка", "", ""}));
+            return listeners;
+        }
         #endregion
         #endregion
     }

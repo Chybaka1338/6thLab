@@ -18,6 +18,16 @@ namespace _6thLab
             get { return _answers[index]; }
         }
 
+        public Listener(string[] answers)
+        {
+            for(int i = 0; i < answers.Length; i++)
+            {
+                answers[i] = answers[i].ToLower().Trim();
+            }
+
+            _answers = answers.ToList();
+        }
+
         private Listener(List<string> answers)
         {
             _answers = answers;
