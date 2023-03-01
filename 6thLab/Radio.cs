@@ -105,9 +105,9 @@ namespace _6thLab
             var pair = new KeyValuePair<String, int>();
 
             int i = 0;
-            while(numberMaxElements != 0)
+            while (numberMaxElements != 0)
             {
-                if(i == pairs.Count)
+                if (i == pairs.Count)
                 {
                     max = int.MinValue;
                     i = 0;
@@ -117,7 +117,7 @@ namespace _6thLab
                     continue;
                 }
 
-                if(max < pairs[i].Value)
+                if (max < pairs[i].Value)
                 {
                     max = pair.Value;
                     pair = pairs[i];
@@ -132,6 +132,12 @@ namespace _6thLab
             for(int i = 0; i < _popularAnswers.Length; i++)
             {
                 Console.WriteLine($"popular answers for this question: {_questions[i]}");
+
+                if (_popularAnswers[i].Count == 0)
+                {
+                    Console.WriteLine("Никто не ответил на данный вопрос");
+                }
+
                 foreach(var pair in _popularAnswers[i])
                 {
                     var percent = (double)pair.Value / _countAnswers[i] * 100; 
