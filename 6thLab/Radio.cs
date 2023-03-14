@@ -13,7 +13,6 @@ namespace _6thLab
     {
         List<String> _questions;
         Dictionary<String, int>[] _answers;
-        Dictionary<String, int>[] _popularAnswers;
         int[] _countAnswers;
 
         static public Radio InitializeRadio(List<String> questions, List<Listener> listeners)
@@ -78,70 +77,53 @@ namespace _6thLab
 
         void SetPopularAnswers()
         {
-            _popularAnswers = new Dictionary<string, int>[_answers.Length];
-            var buff = Copy();
-            
-            for(int i = 0; i < buff.Length; i++)
+            for(int i = 0; i < _answers.Length; i++)
             {
-                _popularAnswers[i] = GetPopularAnswers(buff[i].ToList());
+                Sort(i);
             }
         }
 
-        Dictionary<String, int>[] Copy()
+        void Sort(int curIndex)
         {
-            Dictionary<String, int>[] dist = new Dictionary<string, int>[_answers.Length];
-            for(int i = 0; i < dist.Length; i++)
-            {
-                dist[i] = new Dictionary<string, int>(_answers[i]);
-            }
-            return dist;
-        }
-
-        static Dictionary<String, int> GetPopularAnswers(List<KeyValuePair<String, int>> pairs)
-        {
-            Dictionary<String, int> popularAnswers = new Dictionary<string, int>();
+            var pairs = _answers[curIndex].ToList();
             int numberMaxElements = pairs.Count > 5 ? 5 : pairs.Count;
-            int max = int.MinValue;
-            var pair = new KeyValuePair<String, int>();
 
-            int i = 0;
-            while (numberMaxElements != 0)
+            for(int i = 0; i < numberMaxElements; i++)
             {
-                if (i == pairs.Count)
+                var currentPair = pairs[i];
+                var index = i;
+                for(int j = i + 1; j < pairs.Count; j++)
                 {
-                    max = int.MinValue;
-                    i = 0;
-                    numberMaxElements--;
-                    popularAnswers.Add(pair.Key, pair.Value);
-                    pairs.Remove(pair);
-                    continue;
+                    if (pairs[j].Value > currentPair.Value)
+                    {
+                        currentPair = pairs[j];
+                        index = j;
+                    }
+                    pairs[index] = pairs[i];
+                    pairs[i] = currentPair;
                 }
-
-                if (max < pairs[i].Value)
-                {
-                    max = pair.Value;
-                    pair = pairs[i];
-                }
-                i++;
             }
-            return popularAnswers;
+            _answers[curIndex] = pairs.ToDictionary(p => p.Key, p => p.Value);
         }
 
         public void PrintPopularAnswers()
         {
-            for(int i = 0; i < _popularAnswers.Length; i++)
+            for(int i = 0; i < _answers.Length; i++)
             {
                 Console.WriteLine($"popular answers for this question: {_questions[i]}");
 
-                if (_popularAnswers[i].Count == 0)
+                if (_answers[i].Count == 0)
                 {
                     Console.WriteLine("Никто не ответил на данный вопрос");
                 }
 
-                foreach(var pair in _popularAnswers[i])
+                int numberMaxElements = _answers[i].Count > 5 ? 5 : _answers[i].Count;
+                foreach(var pair in _answers[i])
                 {
                     var percent = (double)pair.Value / _countAnswers[i] * 100; 
                     Console.WriteLine($"{pair.Key}, {pair.Value}, {Math.Round(percent, 1)}%");
+                    numberMaxElements--;
+                    if (numberMaxElements == 0) break;
                 }
                 Console.WriteLine();
             }
