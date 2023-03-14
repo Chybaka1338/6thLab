@@ -115,6 +115,7 @@ namespace _6thLab
                 i++;
             }
         }
+
         #endregion
         public static int[] SetMarks(int numberExams)
         {
@@ -293,11 +294,11 @@ namespace _6thLab
             listeners.Add(new Listener(new string[]{"японская макака", "трудолюбие", "машины"}));
             listeners.Add(new Listener(new string[]{"японская макака", "гордость", "машины"}));
             listeners.Add(new Listener(new string[]{"собака", "трудолюбие", "машины"}));
-            listeners.Add(new Listener(new string[]{"собака", "любопытсво", "камикадзе"}));
+            listeners.Add(new Listener(new string[]{"asd", "любопытсво", "камикадзе"}));
             listeners.Add(new Listener(new string[]{"японская макака", "трудолюбие", "камикадзе"}));
             listeners.Add(new Listener(new string[]{"кошка", "трудолюбие", "камикадзе"}));
-            listeners.Add(new Listener(new string[]{"", "", "камикадзе"}));
-            listeners.Add(new Listener(new string[]{"", "", ""}));
+            listeners.Add(new Listener(new string[]{"qwe", "", "камикадзе"}));
+            listeners.Add(new Listener(new string[]{"rty", "", ""}));
             listeners.Add(new Listener(new string[]{"кошка", "", ""}));
             return listeners;
         }
